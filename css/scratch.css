@@ -1,0 +1,141 @@
+body {
+    margin: 0px;
+}
+
+.mainpage {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.player {
+    text-align: center;
+}
+
+.header-section {
+    background-image: url("../blackdumbbell.jpg");
+    background-color: #cccccc;
+    background-size: cover;
+    background-repeat: no-repeat; 
+    background-position: center; 
+    color: white;
+    height: auto; 
+    aspect-ratio: 16 / 9; 
+    font-size: 32px;
+    margin-top: 0px;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+}
+
+.header-section h1 {
+    padding-top: 10%;
+    margin: 0;
+    text-align: center;
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+}
+
+.header-section p {
+    margin: 0;
+    text-align: center;
+}
+
+a {
+    font-size: 12px;
+    color: white;
+    padding-left: 10px;
+}
+
+.video-section {
+    background-image: url("../blackconcrete.avif");
+    background-color: #cccccc;
+    background-size: cover;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center; 
+    gap: 20px; 
+}
+
+.columns {
+    display: flex; 
+    justify-content: center; 
+    gap: 20px;
+}
+
+.column {
+    flex: 1; 
+    max-width: 50%; 
+    padding: 10px;
+}
+
+.column p {
+    color: white;
+    font-size: 16px;
+    text-align: left;
+}
+
+.exercises-section {
+    background-color: black;
+    color: white;
+    padding: 18px;
+}
+
+.tableau-section {
+    background-image: url("../blackconcrete.avif");
+    background-color: #cccccc;
+    background-size: cover;
+    padding: 18px; /* Keeps internal padding */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't overflow */
+    padding-bottom: 52px;
+}
+
+.tableauPlaceholder {
+    width: 90%; /* Adjust for margin (10% space on left and right combined) */
+    max-width: 1200px; /* Optional max width for larger screens */
+    height: auto;
+    margin: 32px auto; /* Adds top and bottom spacing, centers horizontally */
+}
+
+.tableauViz {
+    width: 100%; /* Forces the Tableau iframe to take up 100% of its container */
+    height: auto;
+    display: block; /* Removes inline element spacing */
+}
+
+/* .image-section {
+    background-color: black;
+    padding: 12px;
+}
+
+.image-section img {
+    height: 50%;
+    width: 50%; 
+    
+} */
+
+.image-section {
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+    padding-top: 52px;
+    padding-bottom: 52px;
+    background-color: black;
+}
+
+.image-section img {
+    max-width: 100%;
+    height: auto;            
+    height: 75%;
+    width: 75%;
+}
+
+

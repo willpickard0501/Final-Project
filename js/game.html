@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falling Letters Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #b2d8d8;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .instructions {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #gameCanvas {
+            background: #006666;
+            border: 2px solid #fff;
+            position: relative;
+        }
+
+        .score {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #555;
+        }
+
+        #startButton, #restartButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        #startButton {
+            display: block;
+        }
+
+        #restartButton {
+            display: none;
+            top: calc(50% + 60px); /* Position below the final score line */
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        Type the letters before they hit the bottom of the box!
+    </div>
+    <div class="score" id="scoreDisplay">Score: 0</div>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <button id="startButton" class="button">Start Game</button>
+    <button id="restartButton" class="button">Restart Game</button>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const startButton = document.getElementById('startButton');
+        const restartButton = document.getElementById('restartButton');
+
+        let letters = [];
+        let score = 0;
+        let gameOver = false;
+        let letterInterval = 1000; // Initial interval for new letters (ms)
+        let letterTimer;
+
+        // Random letter generator
+        function getRandomLetter() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            return letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        // Letter class
+        class Letter {
+            constructor(letter, x, y, speed) {
+                this.letter = letter;
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+            }
+
+            draw() {
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.fillText(this.letter, this.x, this.y);
+            }
+
+            update() {
+                this.y += this.speed;
+            }
+        }
+
+        // Add new letters at intervals
+        function addLetter() {
+            if (gameOver) return;
+            const letter = getRandomLetter();
+            const x = Math.random() * (canvas.width - 20);
+            const speed = Math.random() * 2 + 1 + score / 50; // Slightly increase speed with score
+            letters.push(new Letter(letter, x, 0, speed));
+        }
+
+        // Adjust difficulty as score increases
+        function adjustDifficulty() {
+            if (score > 0 && score % 5 === 0) { // Decrease interval every 5 points
+                letterInterval = Math.max(200, letterInterval - 50); // Decrease interval faster, cap at 200ms
+                clearInterval(letterTimer);
+                letterTimer = setInterval(addLetter, letterInterval);
+            }
+        }
+
+        // Game state update
+        function updateGame() {
+            if (gameOver) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw letters
+            letters.forEach((letter, index) => {
+                letter.update();
+                letter.draw();
+
+                // Check if the letter hits the bottom
+                if (letter.y > canvas.height) {
+                    gameOver = true;
+                    displayGameOver();
+                }
+            });
+
+            // Remove letters that have been typed
+            letters = letters.filter(letter => letter.y <= canvas.height);
+
+            // Display score
+            scoreDisplay.textContent = `Score: ${score}`;
+
+            requestAnimationFrame(updateGame);
+        }
+
+        // Handle key presses
+        document.addEventListener('keydown', (e) => {
+            if (gameOver) return;
+            const pressedKey = e.key.toUpperCase();
+            const letterIndex = letters.findIndex(letter => letter.letter === pressedKey);
+
+            if (letterIndex !== -1) {
+                // Remove the letter and increase score
+                letters.splice(letterIndex, 1);
+                score++;
+                adjustDifficulty();
+            }
+        });
+
+        // Display Game Over screen
+        function displayGameOver() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.font = '36px Arial';
+            ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 20);
+            ctx.font = '24px Arial';
+            ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+
+            // Show restart button and hide start button
+            restartButton.style.display = 'block';
+            startButton.style.display = 'none';
+        }
+
+        // Start the game
+        function startGame() {
+            score = 0;
+            letters = [];
+            gameOver = false;
+            letterInterval = 1000;
+            scoreDisplay.textContent = `Score: ${score}`;
+            startButton.style.display = 'none';
+            restartButton.style.display = 'none';
+            letterTimer = setInterval(addLetter, letterInterval);
+            updateGame();
+        }
+
+        // Restart the game
+        function restartGame() {
+            clearInterval(letterTimer);
+            startGame();
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', restartGame);
+    </script>
+</body>
+</html>
